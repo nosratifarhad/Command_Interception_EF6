@@ -1,7 +1,7 @@
 ﻿using CommandInterceptionWebApplication.Domain;
 using CommandInterceptionWebApplication.Domain.Entitys;
 
-namespace CommandInterceptionWebApplication.Repositorys
+namespace CommandInterceptionWebApplication.Infra.Repositorys
 {
     public class ProductReadRepository : IProductReadRepository
     {

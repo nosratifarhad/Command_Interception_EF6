@@ -2,9 +2,9 @@ using Microsoft.Extensions.Configuration;
 using System.Runtime;
 using CommandInterceptionWebApplication.Domain;
 using CommandInterceptionWebApplication.Helpers;
-using CommandInterceptionWebApplication.Repositorys;
 using CommandInterceptionWebApplication.Services;
 using CommandInterceptionWebApplication.Services.Contracts;
+using CommandInterceptionWebApplication.Infra.Repositorys;
 
 var builder = WebApplication.CreateBuilder(args);
 
