@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "SGjg9dwXApYhQNTxkkU3LWLKoNIxYQw8VV0eyuMaK/M=",
+  "Source": "CommandInterceptionWebApplication",
+  "BasePath": "_content/CommandInterceptionWebApplication",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
