@@ -1,10 +1,11 @@
-using Microsoft.Extensions.Configuration;
-using System.Runtime;
 using CommandInterceptionWebApplication.Domain;
-using CommandInterceptionWebApplication.Helpers;
 using CommandInterceptionWebApplication.Services;
 using CommandInterceptionWebApplication.Services.Contracts;
-using CommandInterceptionWebApplication.Infra.Repositorys;
+using CommandInterceptionWebApplication.Infra.Repositories.WriteRepositories.ProductWriteRepositories;
+using CommandInterceptionWebApplication.Infra.Repositories.ReadRepositories.ProductReadRepositories;
+using CommandInterceptionWebApplication.Infra.Context;
+using Microsoft.EntityFrameworkCore;
+using CommandInterceptionWebApplication.Interceptors;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,22 +13,34 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-#region DIC
+#region Dependency Injection
 
 builder.Services.AddScoped<IProductServices, ProductServices>();
 builder.Services.AddScoped<IProductWriteRepository, ProductWriteRepository>();
 builder.Services.AddScoped<IProductReadRepository, ProductReadRepository>();
 
-#endregion DIC
+#endregion Dependency Injection
 
-#region Add Redis Option 
+#region Add DbContext
 
+//builder.Services.AddDbContext<DefaultDbContext>(options =>
+//{
+//    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+//    options.AddInterceptors(new EFCommandInterceptor());
+//});
 
-#endregion Add Redis Option 
+builder.Services.AddSingleton<EFConnectionInterceptor>();
+
+builder.Services.AddDbContext<DefaultDbContext>((provider, options) =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+    options.AddInterceptors(provider.GetRequiredService<EFConnectionInterceptor>());
+});
+
+#endregion Add DbContext
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

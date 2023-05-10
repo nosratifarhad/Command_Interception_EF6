@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\github\\Command_Interception_EF6\\CommandInterceptionWebApplication\\CommandInterceptionWebApplication\\CommandInterceptionWebApplication.csproj": {}
+    "D:\\github\\Command_Interception_EFCore\\CommandInterceptionWebApplication\\CommandInterceptionWebApplication\\CommandInterceptionWebApplication.csproj": {}
   },
   "projects": {
-    "D:\\github\\Command_Interception_EF6\\CommandInterceptionWebApplication\\CommandInterceptionWebApplication\\CommandInterceptionWebApplication.csproj": {
+    "D:\\github\\Command_Interception_EFCore\\CommandInterceptionWebApplication\\CommandInterceptionWebApplication\\CommandInterceptionWebApplication.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\github\\Command_Interception_EF6\\CommandInterceptionWebApplication\\CommandInterceptionWebApplication\\CommandInterceptionWebApplication.csproj",
+        "projectUniqueName": "D:\\github\\Command_Interception_EFCore\\CommandInterceptionWebApplication\\CommandInterceptionWebApplication\\CommandInterceptionWebApplication.csproj",
         "projectName": "CommandInterceptionWebApplication",
-        "projectPath": "D:\\github\\Command_Interception_EF6\\CommandInterceptionWebApplication\\CommandInterceptionWebApplication\\CommandInterceptionWebApplication.csproj",
+        "projectPath": "D:\\github\\Command_Interception_EFCore\\CommandInterceptionWebApplication\\CommandInterceptionWebApplication\\CommandInterceptionWebApplication.csproj",
         "packagesPath": "C:\\Users\\f_nosrati\\.nuget\\packages\\",
-        "outputPath": "D:\\github\\Command_Interception_EF6\\CommandInterceptionWebApplication\\CommandInterceptionWebApplication\\obj\\",
+        "outputPath": "D:\\github\\Command_Interception_EFCore\\CommandInterceptionWebApplication\\CommandInterceptionWebApplication\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
@@ -25,7 +25,10 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "https://api.nuget.org/v3/index.json": {}
+          "D:\\NamavaCMS\\NamavaCMS\\packages\\": {},
+          "\\\\192.168.70.85\\ShatelInfrastructureNugets": {},
+          "https://api.nuget.org/v3/index.json": {},
+          "https://tfs.namava.ir:81/nuget/Default/": {}
         },
         "frameworks": {
           "net6.0": {
@@ -43,9 +46,29 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "dependencies": {
+            "EntityFramework": {
+              "target": "Package",
+              "version": "[6.4.4, )"
+            },
             "Microsoft.EntityFrameworkCore": {
               "target": "Package",
-              "version": "[7.0.5, )"
+              "version": "[6.0.16, )"
+            },
+            "Microsoft.EntityFrameworkCore.Design": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[6.0.16, )"
+            },
+            "Microsoft.EntityFrameworkCore.SqlServer": {
+              "target": "Package",
+              "version": "[6.0.16, )"
+            },
+            "Microsoft.EntityFrameworkCore.Tools": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[6.0.16, )"
             },
             "Swashbuckle.AspNetCore": {
               "target": "Package",

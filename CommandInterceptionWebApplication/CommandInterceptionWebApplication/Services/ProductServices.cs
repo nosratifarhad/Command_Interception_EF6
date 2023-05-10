@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
 using CommandInterceptionWebApplication.Domain;
 using CommandInterceptionWebApplication.Domain.Entitys;
-using CommandInterceptionWebApplication.Helpers;
 using CommandInterceptionWebApplication.InputModels.ProductInputModels;
 using CommandInterceptionWebApplication.Services.Contracts;
 using CommandInterceptionWebApplication.ViewModels.ProductViewModels;
@@ -19,7 +18,7 @@ namespace CommandInterceptionWebApplication.Services
 
         #region Ctor
 
-        public ProductServices(IOptions<RedisSettingOption> options,
+        public ProductServices(
             IProductWriteRepository productWriteRepository,
             IProductReadRepository productReadRepository)
         {
@@ -31,33 +30,33 @@ namespace CommandInterceptionWebApplication.Services
 
         #region Implement
 
-        public async ValueTask<ProductViewModel> GetProductAsync(int productId)
+        public async ValueTask<ProductViewModel> GetProductAsync(int productId, CancellationToken cancellationToken)
         {
             if (productId <= 0)
                 throw new NullReferenceException("Product Id Is Invalid");
 
-            var productDto = await _productReadRepository.GetProductAsync(productId).ConfigureAwait(false);
-            if (productDto == null)
+            var product= await _productReadRepository.GetProductAsync(productId, cancellationToken).ConfigureAwait(false);
+            if (product == null)
                 return new ProductViewModel();
 
-            var productViewModel = CreateProductViewModelFromProductDto(productDto);
+            var productViewModel = CreateProductViewModelFromProduct(product);
 
             return productViewModel;
         }
 
-        public async ValueTask<IEnumerable<ProductViewModel>> GetProductsAsync()
+        public async ValueTask<IEnumerable<ProductViewModel>> GetProductsAsync(CancellationToken cancellationToken)
         {
-            var productDtos = await _productReadRepository.GetProductsAsync().ConfigureAwait(false);
+            var products = await _productReadRepository.GetProductsAsync(cancellationToken).ConfigureAwait(false);
 
-            if (productDtos == null || productDtos.Count() == 0)
+            if (products == null || products.Count() == 0)
                 return Enumerable.Empty<ProductViewModel>();
 
-            var productViewModels = CreateProductViewModelsFromProductDtos(productDtos);
+            var productViewModels = CreateProductViewModelsFromProducts(products);
 
             return productViewModels;
         }
 
-        public async Task<int> CreateProductAsync(CreateProductInputModel inputModel)
+        public async Task<int> CreateProductAsync(CreateProductInputModel inputModel, CancellationToken cancellationToken)
         {
             if (inputModel == null)
                 throw new NullReferenceException("Product Id Is Invalid");
@@ -66,14 +65,14 @@ namespace CommandInterceptionWebApplication.Services
 
             ValidateProductTitle(inputModel.ProductTitle);
 
-            var productEntoty = CreateProductEntityFromInputModel(inputModel);
+            var product = CreateProductEntityFromInputModel(inputModel);
 
-            int productId = await _productWriteRepository.CreateProductAsync(productEntoty).ConfigureAwait(false);
+            int productId = await _productWriteRepository.CreateProductAsync(product, cancellationToken).ConfigureAwait(false);
 
             return productId;
         }
 
-        public async Task UpdateProductAsync(UpdateProductInputModel inputModel)
+        public async Task UpdateProductAsync(UpdateProductInputModel inputModel, CancellationToken cancellationToken)
         {
             if (inputModel.ProductId <= 0)
                 throw new NullReferenceException("ProductId Is Invalid.");
@@ -82,22 +81,22 @@ namespace CommandInterceptionWebApplication.Services
 
             ValidateProductTitle(inputModel.ProductTitle);
 
-            await IsExistProduct(inputModel.ProductId).ConfigureAwait(false);
+            await IsExistProduct(inputModel.ProductId, cancellationToken).ConfigureAwait(false);
 
             var productEntoty = CreateProductEntityFromInputModel(inputModel);
 
-            await _productWriteRepository.UpdateProductAsync(productEntoty).ConfigureAwait(false);
+            await _productWriteRepository.UpdateProductAsync(productEntoty, cancellationToken).ConfigureAwait(false);
 
         }
 
-        public async Task DeleteProductAsync(int productId)
+        public async Task DeleteProductAsync(int productId, CancellationToken cancellationToken)
         {
             if (productId <= 0)
                 throw new NullReferenceException("ProductId Is Invalid.");
 
-            await IsExistProduct(productId).ConfigureAwait(false);
+            await IsExistProduct(productId, cancellationToken).ConfigureAwait(false);
 
-            await _productWriteRepository.DeleteProductAsync(productId).ConfigureAwait(false);
+            await _productWriteRepository.DeleteProductAsync(productId, cancellationToken).ConfigureAwait(false);
 
         }
 
@@ -105,9 +104,9 @@ namespace CommandInterceptionWebApplication.Services
 
         #region Private
 
-        private async Task IsExistProduct(int productId)
+        private async Task IsExistProduct(int productId, CancellationToken cancellationToken)
         {
-            var isExistProduct = await _productReadRepository.IsExistProductAsync(productId).ConfigureAwait(false);
+            var isExistProduct = await _productReadRepository.IsExistProductAsync(productId, cancellationToken).ConfigureAwait(false);
             if (isExistProduct == false)
                 throw new NullReferenceException("ProductId Is Not Found.");
         }
@@ -118,40 +117,40 @@ namespace CommandInterceptionWebApplication.Services
         private Product CreateProductEntityFromInputModel(UpdateProductInputModel inputModel)
             => new Product(inputModel.ProductId, inputModel.ProductName, inputModel.ProductTitle, inputModel.ProductDescription, inputModel.MainImageName, inputModel.MainImageTitle, inputModel.MainImageUri, inputModel.IsExisting, inputModel.IsFreeDelivery, inputModel.Weight);
 
-        private ProductViewModel CreateProductViewModelFromProductDto(Product dto)
+        private ProductViewModel CreateProductViewModelFromProduct(Product product)
             => new ProductViewModel()
             {
-                ProductId = dto.ProductId,
-                ProductName = dto.ProductName,
-                ProductTitle = dto.ProductTitle,
-                ProductDescription = dto.ProductDescription,
-                MainImageName = dto.MainImageName,
-                MainImageTitle = dto.MainImageTitle,
-                MainImageUri = dto.MainImageUri,
-                IsExisting = dto.IsExisting,
-                IsFreeDelivery = dto.IsFreeDelivery,
-                Weight = dto.Weight
+                ProductId = product.ProductId,
+                ProductName = product.ProductName,
+                ProductTitle = product.ProductTitle,
+                ProductDescription = product.ProductDescription,
+                MainImageName = product.MainImageName,
+                MainImageTitle = product.MainImageTitle,
+                MainImageUri = product.MainImageUri,
+                IsExisting = product.IsExisting,
+                IsFreeDelivery = product.IsFreeDelivery,
+                Weight = product.Weight
             };
 
-        private IEnumerable<ProductViewModel> CreateProductViewModelsFromProductDtos(IEnumerable<Product> dtos)
+        private IEnumerable<ProductViewModel> CreateProductViewModelsFromProducts(IEnumerable<Product> products)
         {
             ICollection<ProductViewModel> productViewModels = new List<ProductViewModel>();
 
-            foreach (var ProductDto in dtos)
+            foreach (var product in products)
                 productViewModels.Add(
                      new ProductViewModel()
                      {
 
-                         ProductId = ProductDto.ProductId,
-                         ProductName = ProductDto.ProductName,
-                         ProductTitle = ProductDto.ProductTitle,
-                         ProductDescription = ProductDto.ProductDescription,
-                         MainImageName = ProductDto.MainImageName,
-                         MainImageTitle = ProductDto.MainImageTitle,
-                         MainImageUri = ProductDto.MainImageUri,
-                         IsExisting = ProductDto.IsExisting,
-                         IsFreeDelivery = ProductDto.IsFreeDelivery,
-                         Weight = ProductDto.Weight
+                         ProductId = product.ProductId,
+                         ProductName = product.ProductName,
+                         ProductTitle = product.ProductTitle,
+                         ProductDescription = product.ProductDescription,
+                         MainImageName = product.MainImageName,
+                         MainImageTitle = product.MainImageTitle,
+                         MainImageUri = product.MainImageUri,
+                         IsExisting = product.IsExisting,
+                         IsFreeDelivery = product.IsFreeDelivery,
+                         Weight = product.Weight
                      });
 
 

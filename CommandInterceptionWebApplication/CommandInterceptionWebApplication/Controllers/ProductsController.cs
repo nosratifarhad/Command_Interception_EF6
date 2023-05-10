@@ -26,9 +26,9 @@ namespace CommandInterceptionWebApplication.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("/api/v1/products")]
-        public async ValueTask<IActionResult> GetProducts()
+        public async ValueTask<IActionResult> GetProducts(CancellationToken cancellationToken)
         {
-            var productVMs = await _productServices.GetProductsAsync();
+            var productVMs = await _productServices.GetProductsAsync(cancellationToken);
 
             return Ok(productVMs);
         }
@@ -39,9 +39,9 @@ namespace CommandInterceptionWebApplication.Controllers
         /// <param name="command"></param>
         /// <returns></returns>
         [HttpPost("/api/v1/products")]
-        public async ValueTask<IActionResult> CreateProduct(CreateProductInputModel command)
+        public async ValueTask<IActionResult> CreateProduct(CreateProductInputModel command, CancellationToken cancellationToken)
         {
-            int productId = await _productServices.CreateProductAsync(command);
+            int productId = await _productServices.CreateProductAsync(command, cancellationToken);
 
             return CreatedAtRoute(nameof(GetProduct), new { productId = productId }, new { ProductId = productId });
         }
@@ -52,9 +52,9 @@ namespace CommandInterceptionWebApplication.Controllers
         /// <param name="productId"></param>
         /// <returns></returns>
         [HttpGet("/api/v1/products/{productId:int}", Name = nameof(GetProduct))]
-        public async ValueTask<IActionResult> GetProduct(int productId)
+        public async ValueTask<IActionResult> GetProduct(int productId, CancellationToken cancellationToken)
         {
-            var productVM = await _productServices.GetProductAsync(productId);
+            var productVM = await _productServices.GetProductAsync(productId, cancellationToken);
 
             return Ok(productVM);
         }
@@ -66,12 +66,12 @@ namespace CommandInterceptionWebApplication.Controllers
         /// <param name="command"></param>
         /// <returns></returns>
         [HttpPut("/api/v1/products/{productId:int}")]
-        public async Task<IActionResult> UpdateProduct(int productId, UpdateProductInputModel command)
+        public async Task<IActionResult> UpdateProduct(int productId, UpdateProductInputModel command, CancellationToken cancellationToken)
         {
             if (productId != command.ProductId)
                 return BadRequest("Bad Request Message");
 
-            await _productServices.UpdateProductAsync(command);
+            await _productServices.UpdateProductAsync(command, cancellationToken);
 
             return NoContent();
         }
@@ -82,9 +82,9 @@ namespace CommandInterceptionWebApplication.Controllers
         /// <param name="productId"></param>
         /// <returns></returns>
         [HttpDelete("/api/v1/products/{productId:int}")]
-        public async Task<IActionResult> DeleteProduct(int productId)
+        public async Task<IActionResult> DeleteProduct(int productId, CancellationToken cancellationToken)
         {
-            await _productServices.DeleteProductAsync(productId);
+            await _productServices.DeleteProductAsync(productId, cancellationToken);
 
             return NoContent();
         }
