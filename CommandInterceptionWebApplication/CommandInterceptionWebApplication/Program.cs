@@ -5,7 +5,7 @@ using CommandInterceptionWebApplication.Infra.Repositories.WriteRepositories.Pro
 using CommandInterceptionWebApplication.Infra.Repositories.ReadRepositories.ProductReadRepositories;
 using CommandInterceptionWebApplication.Infra.Context;
 using Microsoft.EntityFrameworkCore;
-using CommandInterceptionWebApplication.Interceptors;
+using CommandInterceptionWebApplication.Infra.Interceptors;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,18 +23,13 @@ builder.Services.AddScoped<IProductReadRepository, ProductReadRepository>();
 
 #region Add DbContext
 
-//builder.Services.AddDbContext<DefaultDbContext>(options =>
-//{
-//    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-//    options.AddInterceptors(new EFCommandInterceptor());
-//});
-
-builder.Services.AddSingleton<EFConnectionInterceptor>();
+//builder.Services.AddSingleton<EFConnectionInterceptor>();
+builder.Services.AddSingleton<EFTransactionInterceptor>();
 
 builder.Services.AddDbContext<DefaultDbContext>((provider, options) =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-    options.AddInterceptors(provider.GetRequiredService<EFConnectionInterceptor>());
+    options.AddInterceptors(provider.GetRequiredService<EFTransactionInterceptor>());
 });
 
 #endregion Add DbContext

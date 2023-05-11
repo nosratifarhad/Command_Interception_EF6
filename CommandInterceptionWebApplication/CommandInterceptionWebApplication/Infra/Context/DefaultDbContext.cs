@@ -1,4 +1,5 @@
 ﻿using CommandInterceptionWebApplication.Domain.Entitys;
+using CommandInterceptionWebApplication.Infra.Interceptors;
 using CommandInterceptionWebApplication.Infra.Mappings;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,9 +9,7 @@ public class DefaultDbContext : DbContext
 {
     public DefaultDbContext(DbContextOptions<DefaultDbContext> options)
     : base(options)
-    {
-
-    }
+    { }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
