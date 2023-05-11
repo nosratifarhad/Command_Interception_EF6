@@ -52,7 +52,7 @@ namespace CommandInterceptionWebApplication.Interceptors
 
         private void LogInfo(string method, string data)
         {
-            Console.WriteLine("Intercepted on: {0}: \n\t{1}", method, data);
+            _logger.LogInformation("Intercepted on: {0}: \n\t{1}", method, data);
         }
 
         private void LogInfo(string method, string data, string exception)
