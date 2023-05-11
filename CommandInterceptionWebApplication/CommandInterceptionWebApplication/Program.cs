@@ -6,6 +6,7 @@ using CommandInterceptionWebApplication.Infra.Repositories.ReadRepositories.Prod
 using CommandInterceptionWebApplication.Infra.Context;
 using Microsoft.EntityFrameworkCore;
 using CommandInterceptionWebApplication.Infra.Interceptors;
+using CommandInterceptionWebApplication.Interceptors;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,12 +25,15 @@ builder.Services.AddScoped<IProductReadRepository, ProductReadRepository>();
 #region Add DbContext
 
 //builder.Services.AddSingleton<EFConnectionInterceptor>();
+//builder.Services.AddSingleton<EFCommandInterceptor>();
 builder.Services.AddSingleton<EFTransactionInterceptor>();
 
 builder.Services.AddDbContext<DefaultDbContext>((provider, options) =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-    options.AddInterceptors(provider.GetRequiredService<EFTransactionInterceptor>());
+    //options.AddInterceptors(provider.GetRequiredService<EFTransactionInterceptor>());
+    //options.AddInterceptors(provider.GetRequiredService<EFCommandInterceptor>());
+    //options.AddInterceptors(provider.GetRequiredService<EFConnectionInterceptor>());
 });
 
 #endregion Add DbContext
